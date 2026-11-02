@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>登録準備ボード（デモ）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600&family=Noto+Sans+JP:wght@400..700&display=swap">
+<style>
+  :root{
+    --ink:#1A1B1D; --muted:#56595E; --label:#8B8E94; --brand:#1D4E89; --brand-hover:#2C65A8; --brand-soft:#EAF1F9;
+    --bg:#F6F5F2; --card:#FFFFFF; --line:#E2E0DB; --line-strong:#C4C1BA;
+    --alert:#C43E30; --alert-text:#A8301F; --alert-soft:#FBEAE7;
+    --warn:#B47012; --warn-text:#8F5A0A; --warn-soft:#FBF1E1;
+    --band:#2B2C2E; --band-ink:#E9E8E4;
+    --font:"Noto Sans JP","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
+    --num:"Inter","Noto Sans JP",system-ui,sans-serif;
+    color-scheme: light;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.7}
+  .num{font-family:var(--num);font-variant-numeric:tabular-nums}
+  a{color:var(--brand)}
+  a:hover{color:var(--brand-hover)}
+  :focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+  button{font:inherit;color:inherit}
+  h1,h2,h3,h4{margin:0}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+
+  /* M1 デモの帯 */
+  .demo{background:var(--band);color:var(--band-ink);font-size:12px}
+  .demo .wrap{display:flex;flex-wrap:wrap;gap:4px 16px;align-items:center;justify-content:space-between;padding-top:4px;padding-bottom:4px}
+  .demo p{margin:0;line-height:1.6}
+  .demo button{min-height:44px;padding:0 14px;background:transparent;border:1px solid var(--band-ink);border-radius:4px;color:var(--band-ink);cursor:pointer;font-size:12px;font-weight:500}
+  .demo button:hover{background:#3B3C3F}
+  .demo button:focus-visible{outline-color:#fff}
+
+  /* M2 見出し */
+  header.top{padding:20px 0 4px}
+  header.top .box{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px 32px}
+  h1{font-size:22px;line-height:1.4;font-weight:700}
+  .about{margin:2px 0 0;font-size:12px;color:var(--muted);line-height:1.6}
+  .sub{margin:4px 0 0;color:var(--muted);font-size:13px}
+  .facts{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 16px;margin:12px 0 0;font-size:14px}
+  .facts dt{color:var(--muted);font-size:12px;font-weight:500;letter-spacing:.04em;padding-top:2px}
+  .facts dd{margin:0}
+  .summary{margin:14px 0 0;font-weight:700;font-size:14px;line-height:1.6}
+  .legend{margin:8px 0 0;font-size:11.5px;color:var(--muted);line-height:1.6;display:flex;flex-wrap:wrap;gap:0 12px}
+  .counts{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 0;padding:0;list-style:none}
+  .cnt{display:flex;align-items:baseline;gap:6px;border:1px solid var(--line-strong);border-radius:8px;padding:4px 12px;font-size:13px;font-weight:500;background:var(--card)}
+  .cnt b{font-family:var(--num);font-variant-numeric:tabular-nums;font-size:24px;line-height:1.2;font-weight:600}
+  .cnt.m{border-color:var(--alert);color:var(--alert-text);background:var(--alert-soft)}
+  .cnt.c{border-color:var(--warn);color:var(--warn-text);background:var(--warn-soft)}
+  .cnt.z{background:var(--card);border-color:var(--line-strong);color:var(--ink)}
+  .next h2{font-size:16px;font-weight:700;line-height:1.5;margin-bottom:6px}
+  .next ol{margin:0;padding:0;list-style:none;counter-reset:n}
+  .next li{counter-increment:n;position:relative;padding:6px 0 6px 32px;border-top:1px solid var(--line)}
+  .next li:first-child{border-top:0}
+  .next li::before{content:counter(n);position:absolute;left:0;top:8px;width:22px;height:22px;border-radius:50%;background:var(--brand);color:#fff;font-family:var(--num);font-size:12px;font-weight:600;line-height:22px;text-align:center}
+  .next li > span{display:block;color:var(--muted);font-size:13px}
+
+  /* タブ */
+  .tabs{display:flex;gap:2px;margin-top:20px;border-bottom:1px solid var(--line-strong);overflow-x:auto}
+  .tabs button{flex:1 1 0;min-width:0;min-height:48px;padding:0 12px;background:transparent;border:0;border-bottom:3px solid transparent;margin-bottom:-1px;color:var(--muted);font-weight:500;font-size:15px;cursor:pointer;white-space:nowrap}
+  .tabs button:hover{color:var(--brand)}
+  .tabs button[aria-selected="true"]{color:var(--brand);border-bottom-color:var(--brand);background:var(--brand-soft);font-weight:700}
+  .panel{padding:16px 0 8px}
+  .panel[hidden]{display:none}
+  .lead{margin:0 0 12px;color:var(--muted);font-size:13px}
+
+  /* M3 M4 行 */
+  .rows{list-style:none;margin:0;padding:0;background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .item{border-top:1px solid var(--line)}
+  .item:first-child{border-top:0}
+  .item.s-missing{background:var(--alert-soft)}
+  .item.s-checking{background:var(--warn-soft)}
+  .item .main{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 16px;align-items:start;padding:12px 16px}
+  .item h3{font-size:14px;font-weight:700;line-height:1.6}
+  .item .memo{margin:2px 0 0;color:var(--muted);font-size:13px}
+  .item .who{display:inline-block;margin-top:2px;font-size:12px;font-weight:500;color:var(--muted);letter-spacing:.04em}
+  .acts{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+  .st{min-height:44px;min-width:128px;padding:0 12px;border:1px solid var(--line-strong);border-radius:4px;background:var(--card);cursor:pointer;font-size:13px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:6px;color:var(--muted)}
+  .st:hover{background:var(--bg)}
+  .st .ic{font-family:var(--num);font-size:14px}
+  .s-missing .st{color:var(--alert-text);border-color:var(--alert);background:var(--card)}
+  .s-checking .st{color:var(--warn-text);border-color:var(--warn);background:var(--card)}
+  .ex{min-height:44px;padding:0 8px;background:transparent;border:0;color:var(--brand);cursor:pointer;font-size:13px;font-weight:500;text-decoration:underline;text-underline-offset:3px}
+  .ex[aria-expanded="true"]{font-weight:700}
+  .explain{padding:0 16px 14px;font-size:13px}
+  .explain[hidden]{display:none}
+  .explain p{margin:0 0 6px;padding:10px 12px;background:var(--card);border:1px solid var(--line);border-radius:8px}
+  .src{margin:0;font-size:12px;color:var(--muted)}
+  .src a{margin-right:10px}
+
+  /* M5 M6 時系列 */
+  .tl{list-style:none;margin:0;padding:0 0 0 20px;border-left:2px solid var(--line-strong)}
+  .tl li{position:relative;padding:0 0 14px 8px}
+  .tl li::before{content:"";position:absolute;left:-29px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--card);border:2px solid var(--line-strong)}
+  .tl li.today::before{background:var(--brand);border-color:var(--brand)}
+  .tl .when{font-family:var(--num);font-variant-numeric:tabular-nums;font-weight:600;font-size:14px;margin-right:8px}
+  .tl .who{display:inline-block;margin-left:6px;padding:0 8px;border:1px solid var(--line-strong);border-radius:4px;font-size:12px;color:var(--muted);background:var(--card)}
+  .tl li.today{padding:6px 8px 12px;margin-left:0}
+  .tl li.today .mark{display:inline-block;padding:2px 10px;border-radius:4px;background:var(--brand);color:#fff;font-size:12px;font-weight:700}
+  .tl li.today .mark .num{font-weight:600}
+  .tl .card{display:block;margin-top:4px;padding:10px 12px;background:var(--card);border:1px solid var(--line);border-radius:8px}
+  .tl .card .what{display:block}
+
+  .ai{margin-top:24px;padding-top:20px;border-top:1px solid var(--line-strong)}
+  .ai h3{font-size:16px;font-weight:700;line-height:1.5}
+  .ai .cap{margin:2px 0 12px;color:var(--muted);font-size:13px}
+  .steps{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:16px;list-style:none;margin:0;padding:0}
+  .step{position:relative;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;min-width:0}
+  .step h4{font-size:14px;font-weight:700;margin-bottom:2px}
+  .step .tag{display:inline-block;margin-bottom:6px;font-size:12px;font-weight:500;letter-spacing:.04em;color:var(--muted)}
+  .step p{margin:0 0 8px;font-size:13px}
+  .rec{width:100%;border-collapse:collapse;font-size:12px}
+  .rec caption{display:block;width:100%;text-align:left;font-size:12px;color:var(--muted);padding-bottom:4px}
+  .rec th,.rec td{text-align:left;padding:4px 6px 4px 0;border-top:1px solid var(--line);vertical-align:top;font-weight:400}
+  .rec thead th{font-weight:500;color:var(--muted);border-top:0}
+  .rec td:first-child{white-space:nowrap}
+  .rec td.kg{text-align:right;white-space:nowrap}
+  .btn{min-height:44px;padding:0 16px;border:1px solid var(--brand);border-radius:8px;background:var(--brand);color:#fff;font-weight:700;cursor:pointer}
+  .btn:hover{background:var(--brand-hover)}
+  .btn.ghost{background:transparent;color:var(--brand)}
+  .btn.ghost:hover{background:var(--brand-soft)}
+  .sum{width:100%;border-collapse:collapse;font-size:13px}
+  .sum th,.sum td{padding:6px 0;border-top:1px solid var(--line);text-align:left;font-weight:400}
+  .sum td{text-align:right;font-family:var(--num);font-variant-numeric:tabular-nums;font-weight:600}
+  .sum tr:first-child th,.sum tr:first-child td{border-top:0}
+  .note{margin:8px 0 0;font-size:12px;color:var(--muted)}
+
+  /* M9 足元 */
+  footer.foot{margin-top:24px;padding:16px 0 32px;border-top:1px solid var(--line-strong)}
+  footer.foot p{margin:0;font-size:13px;color:var(--ink);font-weight:500}
+  footer.foot .fine{margin-top:6px;font-size:12px;color:var(--muted);font-weight:400}
+
+  /* ダイアログ */
+  dialog{border:1px solid var(--line);border-radius:8px;padding:0;max-width:min(520px,calc(100vw - 32px));width:100%;color:var(--ink);background:var(--card);box-shadow:0 12px 40px rgba(26,27,29,.28)}
+  dialog::backdrop{background:rgba(26,27,29,.45)}
+  dialog[open]{animation:fade .16s ease-out}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .dlg{padding:20px}
+  .dlg h2{font-size:16px;font-weight:700;line-height:1.5;margin-bottom:8px}
+  .dlg p{margin:0 0 12px}
+  .dlg .btns{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;margin-top:16px}
+  .draft-banner{padding:8px 12px;background:var(--warn-soft);border:1px solid var(--warn);border-radius:4px;color:var(--warn-text);font-weight:700;font-size:13px;margin-bottom:12px}
+  .cert{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 16px;margin:0;padding:12px;border:1px dashed var(--line-strong);border-radius:8px}
+  .cert dt{color:var(--muted);font-size:12px;font-weight:500;letter-spacing:.04em;padding-top:2px}
+  .cert dd{margin:0}
+
+  @media (max-width:760px){
+    header.top .box{grid-template-columns:1fr}
+    .steps{grid-template-columns:1fr}
+    header.top{padding-top:12px}
+    header.top .box{padding:12px;gap:10px}
+    .sub{font-size:12px;line-height:1.6}
+    .facts{margin-top:8px;gap:2px 12px}
+    .summary{margin-top:10px}
+    .counts{flex-wrap:nowrap;gap:6px;margin-top:6px}
+    .cnt{padding:2px 8px;font-size:12px;gap:4px;white-space:nowrap}
+    .cnt b{font-size:18px}
+    .tabs{margin-top:12px}
+    .item .main{grid-template-columns:1fr}
+    .acts{flex-direction:row;align-items:center;justify-content:space-between;flex-wrap:wrap}
+    .tabs button{padding:0 4px;font-size:14px}
+    .rec thead{display:none}
+    .rec,.rec tbody,.rec tr,.rec td{display:block;width:100%}
+    .rec tr{padding:6px 0;border-top:1px solid var(--line)}
+    .rec td{border:0;padding:0;text-align:left!important}
+    .rec td.kg::after{content:" kg"}
+  }
+  @media (prefers-reduced-motion: reduce){ *,*::before,*::after{animation:none!important;transition:none!important} }
+</style>
+</head>
+<body>
+
+<div class="demo" role="region" aria-label="デモの案内">
+  <div class="wrap">
+    <p>これはデモです。架空の会社のデータで、切り替えた内容はこのブラウザの中にだけ残ります</p>
+    <button type="button" id="resetBtn">最初の状態に戻す</button>
+  </div>
+</div>
+
+<header class="top">
+  <div class="wrap">
+    <div class="box">
+      <div>
+        <h1>（架空）東和設備工業株式会社</h1>
+        <p class="about">このページは、登録の準備を手伝う担当が調べた結果を整理し、お客様と一緒に見るためのものです。お客様＝申請する会社、担当＝準備を手伝う人。</p>
+        <p class="sub">第一種フロン類充塡回収業者の登録準備 ／ 従業員<span class="num">12</span>名・業務用エアコンの入れ替え工事</p>
+        <dl class="facts">
+          <dt>申請先</dt><dd>○○県（面談で決める）</dd>
+          <dt>手数料</dt><dd>新規 <span class="num">5,000</span>円前後（県で違う。例：鳥取県 <span class="num">5,000</span>円）<a href="https://www.pref.tottori.lg.jp/291555.htm" target="_blank" rel="noopener noreferrer">出典：鳥取県</a></dd>
+          <dt>申請の目標</dt><dd><span class="num">2026</span>年<span class="num">12</span>月中旬</dd>
+        </dl>
+        <p class="summary" id="summary" aria-live="polite"></p>
+        <ul class="counts" id="counts" aria-live="polite" aria-label="状態の件数"></ul>
+        <p class="legend"><span>！ 足りない＝無いと分かった物</span><span>？ 確認中＝あるか・要るかを確かめている物</span><span>出典＝調べた元の県・国の案内</span></p>
+      </div>
+      <div class="next">
+        <h2>次にやること</h2>
+        <ol>
+          <li>作業する人の資格を確かめる<span>お客様・<span class="num">11/14</span>まで</span></li>
+          <li>回収装置の納品書を探す<span>お客様・<span class="num">11/14</span>まで</span></li>
+          <li>申請先の県の手引きで、書類と手数料を確かめる<span>担当・<span class="num">11/12</span>まで</span></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="tabs" role="tablist" aria-label="登録準備の4つの見方" id="tabs">
+    <button role="tab" id="tab-req" aria-controls="p-req" aria-selected="true" tabindex="0" type="button">要件</button>
+    <button role="tab" id="tab-doc" aria-controls="p-doc" aria-selected="false" tabindex="-1" type="button">書類</button>
+    <button role="tab" id="tab-plan" aria-controls="p-plan" aria-selected="false" tabindex="-1" type="button">日程</button>
+    <button role="tab" id="tab-after" aria-controls="p-after" aria-selected="false" tabindex="-1" type="button">登録の後</button>
+  </div>
+
+  <section class="panel" id="p-req" role="tabpanel" aria-labelledby="tab-req">
+    <h2 class="lead" style="font-weight:400">登録の要件。状態の札を押すと「そろっている → 足りない → 確認中」の順に変わります。</h2>
+    <ul class="rows" id="list-req"></ul>
+  </section>
+
+  <section class="panel" id="p-doc" role="tabpanel" aria-labelledby="tab-doc" hidden>
+    <h2 class="lead" style="font-weight:400">申請に要る書類。書類は県で違うため、申請先が決まったら県の手引きで確かめます。</h2>
+    <ul class="rows" id="list-doc"></ul>
+  </section>
+
+  <section class="panel" id="p-plan" role="tabpanel" aria-labelledby="tab-plan" hidden>
+    <h2 class="lead" style="font-weight:400">申請までの流れ。申請の目標は2026年12月中旬です。</h2>
+    <ol class="tl" id="tl-plan"></ol>
+  </section>
+
+  <section class="panel" id="p-after" role="tabpanel" aria-labelledby="tab-after" hidden>
+    <h2 class="lead" style="font-weight:400">登録の後に、毎回・毎年やること。</h2>
+    <ol class="tl" id="tl-after"></ol>
+
+    <div class="ai">
+      <h3>AIで楽にする案：記録をつけるだけで、証明書の下書きと年1回の集計ができる</h3>
+      <p class="cap" style="margin-bottom:4px">登録の後は、工事のたびに証明書と記録が要ります。ここを楽にする案です。</p>
+      <p class="cap">画面の例です。実際のAIは呼び出していません。数字と現場は架空です。</p>
+      <ol class="steps">
+        <li class="step">
+          <span class="tag">1　現場で</span>
+          <h4>スマホで記録を入れる</h4>
+          <p>機器の写真・冷媒の種類・回収した量（kg）を入れます。</p>
+          <table class="rec">
+            <caption>回収の記録（例）</caption>
+            <thead><tr><th scope="col">日付</th><th scope="col">現場</th><th scope="col">機器</th><th scope="col">冷媒</th><th scope="col" style="text-align:right">kg</th></tr></thead>
+            <tbody id="recBody"></tbody>
+          </table>
+        </li>
+        <li class="step">
+          <span class="tag">2　事務所で</span>
+          <h4>記録から証明書の下書きができる</h4>
+          <p>記録の内容から、回収証明書の下書きが並びます。内容を確かめてから、お客様が交付します。</p>
+          <button type="button" class="btn" id="draftBtn">回収証明書の下書きを見る</button>
+        </li>
+        <li class="step">
+          <span class="tag">3　年に1回</span>
+          <h4>今年度の合計が集計されている</h4>
+          <table class="sum" id="sum" aria-label="今年度の合計（例）"></table>
+          <p class="note">県への報告は、お客様が内容を確かめてから出します。</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <p>申請書の作成・提出は、お客様ご自身で行います（代行は行政書士の業務です）。この画面は、調べた結果を整理し、説明するためのものです。</p>
+    <p class="fine">調べた日：<span class="num">2026-11-02</span>。県で書類・手数料・窓口が違うため、申請先の県の最新の手引きで確かめ直します。</p>
+  </footer>
+</main>
+
+<dialog id="dlgReset" aria-labelledby="dlgResetT">
+  <div class="dlg">
+    <h2 id="dlgResetT">すべての状態を最初に戻しますか？</h2>
+    <p>要件と書類の<span class="num">10</span>件の状態が、最初の状態（足りない<span class="num">3</span>・確認中<span class="num">5</span>・そろっている<span class="num">2</span>）に戻ります。</p>
+    <div class="btns">
+      <button type="button" class="btn ghost" data-close>戻さない</button>
+      <button type="button" class="btn" id="doReset">最初の状態に戻す</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="dlgDraft" aria-labelledby="dlgDraftT">
+  <div class="dlg">
+    <h2 id="dlgDraftT">回収証明書（例）</h2>
+    <div class="draft-banner">下書き：内容を確かめてから交付してください</div>
+    <dl class="cert" id="cert"></dl>
+    <p class="note">架空の値による例です。書く項目は、県と環境省の案内で確かめます。</p>
+    <div class="btns"><button type="button" class="btn ghost" data-close>閉じる</button></div>
+  </div>
+</dialog>
+
+<script>
+(function(){
+  "use strict";
+  var KEY = "freon-board-v1";
+  var SRC = {
+    tottori:{label:"鳥取県",url:"https://www.pref.tottori.lg.jp/291555.htm"},
+    hiroshima:{label:"広島県",url:"https://www.pref.hiroshima.lg.jp/uploaded/attachment/501518.pdf"},
+    jreco:{label:"JRECO Q&A",url:"https://jreco.or.jp/data/2shu_qa202401.pdf"},
+    fukui:{label:"福井県の手引き",url:"https://www.pref.fukui.lg.jp/doc/kankyou/furon_shinsei_d/fil/tebiki_250401.pdf"},
+    toyama:{label:"富山県の手引き",url:"https://www.pref.toyama.jp/documents/7271/new260723tebiki.pdf"},
+    tochigi:{label:"栃木県",url:"https://www.pref.tochigi.lg.jp/d03/eco/kankyou/hozen/documents/20260306104812.pdf"},
+    shizuoka:{label:"静岡県",url:"https://www.pref.shizuoka.jp/kurashikankyo/kankyo/ondanka/1040677/1002549/1073298.html"},
+    shiga:{label:"滋賀県",url:"https://www.pref.shiga.lg.jp/file/attachment/5601026.pdf"},
+    fukuoka:{label:"福岡県",url:"https://www.pref.fukuoka.lg.jp/contents/fron-12.html"},
+    kanagawa:{label:"神奈川県（報告）",url:"https://www.pref.kanagawa.jp/docs/pf7/furon/furon_hokoku.html"},
+    env:{label:"環境省（義務の一覧）",url:"https://www.env.go.jp/earth/ozone/cfc/law/kaisei_h27/JK-hdbk_v1r1_sec03.pdf"}
+  };
+
+  var LABEL = {ok:"そろっている", missing:"足りない", checking:"確認中"};
+  var ICON = {ok:"✓", missing:"！", checking:"？"};
+  var NEXT = {ok:"missing", missing:"checking", checking:"ok"};
+
+  var ITEMS = [
+    {id:"req-1",tab:"req",title:"回収装置を持っている（借りる場合は承諾書がある）",status:"ok",memo:"自社の回収機 2台",
+      explain:"回収装置を持っていることを示す書類（納品書・領収書の写しなど）を求める県があります。借りる場合は承諾書です。",
+      src:[SRC.tochigi,SRC.shizuoka]},
+    {id:"req-2",tab:"req",title:"充塡・回収を「十分な知見を有する者」が自ら行うか立ち会う",short:"作業する人の知見",status:"missing",memo:"冷媒フロン類取扱技術者がいない。冷凍空調技士の佐藤さんが講習を受ければ当たるかを確かめる",
+      explain:"充塡・回収は「十分な知見を有する者」が自ら行うか立ち会います。例は冷媒フロン類取扱技術者です。別の道もあり、冷凍空調技士などの資格を持ち、充塡の知識を身につける講習を受けた者も当たります。",
+      src:[SRC.jreco,SRC.fukui]},
+    {id:"req-3",tab:"req",title:"欠格要件に当たらない（誓約書で誓う）",status:"checking",memo:"役員全員の確認が要る",
+      explain:"欠格要件に当たらないことを、誓約書で誓います。どの場合が欠格要件に当たるかは、申請先の県の手引きで確かめます。",
+      src:[SRC.tottori,SRC.shizuoka]},
+    {id:"req-4",tab:"req",title:"工事をする県の数",status:"checking",memo:"隣の県でも工事をするなら、その県の窓口も確かめる",
+      explain:"登録は都道府県知事の登録です。県外の事業者も、その県の窓口に申請します。工事をする県が複数ある時は、県ごとの窓口を面談で一緒に確かめます。",
+      src:[SRC.tottori]},
+
+    {id:"doc-1",tab:"doc",title:"登録申請書（様式第1号）",status:"checking",owner:"お客様",memo:"お客様が記入する。記入のポイントは担当が説明する",
+      explain:"登録を申請するための書類で、様式は第1号です。申請書の記入と提出は、お客様ご自身で行います。担当は、記入のポイントを説明します。",
+      src:[SRC.tochigi]},
+    {id:"doc-2",tab:"doc",title:"誓約書",status:"checking",owner:"お客様",memo:"要件の欠格要件の確認が済んでから",
+      explain:"欠格要件に当たらないことを誓う書類です。鳥取県などが案内しています。",
+      src:[SRC.tottori,SRC.shizuoka]},
+    {id:"doc-3",tab:"doc",title:"法人番号（県によっては登記事項証明書）",status:"ok",owner:"お客様",memo:"法人番号で足りる県もある",
+      explain:"法人は、法人番号で足りる県があります（例：滋賀県）。登記の証明を求める県もあります。個人の場合は住民票の写しです。",
+      src:[SRC.shiga]},
+    {id:"doc-4",tab:"doc",title:"回収装置を持っていることを示す書類（納品書・領収書の写し）",short:"回収装置の納品書（1台分）",status:"missing",owner:"お客様",memo:"2台のうち1台の納品書が見つからない",
+      explain:"回収装置を持っていることを示す書類です。納品書や領収書の写しなどが当たります。借りる場合は承諾書です。",
+      src:[SRC.tochigi,SRC.shizuoka]},
+    {id:"doc-5",tab:"doc",title:"「十分な知見を有する者」の資格を説明する書類",short:"知見を有する者の資格の書類",status:"missing",owner:"お客様",memo:"求める県がある（例：富山県）。資格が決まってから",
+      explain:"回収・充塡それぞれの「十分な知見を有する者」の資格を説明する別紙を求める県があります（例：富山県）。他の県で求めるかは、まだ調べがついていません。申請先の県の手引きで確かめます。",
+      src:[SRC.toyama]},
+    {id:"doc-6",tab:"doc",title:"手数料",status:"checking",owner:"お客様",memo:"納め方は県の案内で確かめる",
+      explain:"新規は5,000円前後で、県で違います。鳥取県は5,000円（更新は4,200円）、福井県は5,000円（更新は4,000円）、静岡県は2026年4月から5,100円です。鳥取県では、納め方は書類の形式審査の後に案内されます。",
+      src:[SRC.tottori,SRC.fukui,SRC.shizuoka]}
+  ];
+
+  var PLAN = [
+    {when:"11月第2週",what:"面談（30〜60分）。今そろっている物を一緒に確かめる",who:"お客様・担当"},
+    {today:true},
+    {when:"11/12まで",what:"申請先の県の手引きを読み、書類と手数料を確かめる",who:"担当"},
+    {when:"11/14まで",what:"資格・納品書を確かめる",who:"お客様"},
+    {when:"11月下旬",what:"足りない資格の講習を申し込む（必要なら）",who:"お客様"},
+    {when:"12月上旬",what:"書類をそろえ、県の窓口に事前に相談する",who:"お客様"},
+    {when:"12月中旬",what:"申請する（お客様が提出）",who:"お客様"},
+    {when:"申請の後",what:"登録までの日数は県に確かめる（まだ調べがついていない）",who:"担当"}
+  ];
+
+  var AFTER = [
+    {when:"充塡・回収のたび",what:"充塡証明書・回収証明書を、機器の管理者に交付する",src:[SRC.env]},
+    {when:"機器を引き取る時",what:"引取証明書を交付し、写しを3年保存する",src:[SRC.fukuoka,SRC.env]},
+    {when:"回収した後",what:"回収したフロン類を再生業者・破壊業者へ引き渡し、再生・破壊証明書を管理者へ回す",src:[SRC.tottori]},
+    {when:"日々",what:"充塡量・回収量の記録を作り、5年保存する",src:[SRC.fukuoka]},
+    {when:"毎年5月15日まで",what:"前年度（4/1〜3/31）に充塡・回収した台数と量を県に報告する。0件でも報告する",src:[SRC.kanagawa,SRC.tottori]},
+    {when:"変更があった時",what:"30日以内に変更届を出す",src:[SRC.tottori]},
+    {when:"5年ごと",what:"登録を更新する（期限の10日前まで）",src:[SRC.tottori,SRC.hiroshima]}
+  ];
+
+  var RECORDS = [
+    {date:"2026-10-02",site:"○○市 Aビル 3F",unit:"天井カセット形 5馬力",refrigerant:"R410A",kg:4.2},
+    {date:"2026-10-09",site:"△△町 B医院",unit:"天井カセット形 3馬力",refrigerant:"R32",kg:2.6},
+    {date:"2026-10-16",site:"○○市 C食品 倉庫",unit:"冷凍機",refrigerant:"R404A",kg:11.8},
+    {date:"2026-10-23",site:"□□市 D事務所",unit:"ビル用マルチ",refrigerant:"R410A",kg:9.5},
+    {date:"2026-10-30",site:"△△町 E店舗",unit:"天井吊形 4馬力",refrigerant:"R22",kg:3.4}
+  ];
+
+  function $(id){return document.getElementById(id);}
+  function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+  function srcLinks(arr){
+    return arr.map(function(s){return '<a href="'+esc(s.url)+'" target="_blank" rel="noopener noreferrer">出典：'+esc(s.label)+'</a>';}).join("");
+  }
+
+  /* 状態の保存（localStorage は try/catch） */
+  var state = {};
+  function initialState(){ var o={}; ITEMS.forEach(function(i){o[i.id]=i.status;}); return o; }
+  function load(){
+    state = initialState();
+    try{
+      var raw = window.localStorage.getItem(KEY);
+      if(!raw) return;
+      var saved = JSON.parse(raw);
+      if(saved && saved.statuses){
+        ITEMS.forEach(function(i){ var v=saved.statuses[i.id]; if(v==="ok"||v==="missing"||v==="checking") state[i.id]=v; });
+      }
+    }catch(e){}
+  }
+  function save(){
+    try{ window.localStorage.setItem(KEY, JSON.stringify({statuses:state})); }catch(e){}
+  }
+
+  var openIds = {}; /* 開いている説明（保存しない） */
+
+  function counts(){
+    var c={ok:0,missing:0,checking:0};
+    ITEMS.forEach(function(i){c[state[i.id]]++;});
+    return c;
+  }
+  function renderCounts(){
+    var c=counts();
+    var miss=ITEMS.filter(function(i){return state[i.id]==="missing";}).map(function(i){return i.short||i.title;});
+    $("summary").textContent = miss.length
+      ? "登録までに、あと"+miss.length+"つ足りません："+miss.join("・")
+      : (c.checking ? "足りない物はありません。確認中の"+c.checking+"件を確かめます" : "足りない物も、確認中の物もありません");
+    $("counts").innerHTML =
+      '<li class="cnt m"><span aria-hidden="true">！</span> 足りない <b>'+c.missing+'</b></li>'+
+      '<li class="cnt c"><span aria-hidden="true">？</span> 確認中 <b>'+c.checking+'</b></li>'+
+      '<li class="cnt z"><span aria-hidden="true">✓</span> そろっている <b>'+c.ok+'</b></li>';
+  }
+
+  function rowHtml(it){
+    var s = state[it.id], open = !!openIds[it.id];
+    var nextLabel = LABEL[NEXT[s]];
+    return '<li class="item s-'+s+'" data-id="'+it.id+'">'+
+      '<div class="main">'+
+        '<div><h3>'+esc(it.title)+'</h3>'+
+          '<p class="memo">'+esc(it.memo)+'</p>'+
+          (it.owner?'<span class="who">担当：'+esc(it.owner)+'</span>':'')+
+        '</div>'+
+        '<div class="acts">'+
+          '<button type="button" class="st" data-act="status" aria-label="状態：'+LABEL[s]+'。押すと「'+nextLabel+'」に変わります（'+esc(it.title)+'）">'+
+            '<span class="ic" aria-hidden="true">'+ICON[s]+'</span><span>'+LABEL[s]+'</span></button>'+
+          '<button type="button" class="ex" data-act="explain" aria-expanded="'+open+'" aria-controls="ex-'+it.id+'">説明'+(open?'を閉じる':'を開く')+'</button>'+
+        '</div>'+
+      '</div>'+
+      '<div class="explain" id="ex-'+it.id+'"'+(open?'':' hidden')+'><p>'+esc(it.explain)+'</p><p class="src" style="border:0;padding:0;background:none">'+srcLinks(it.src)+'</p></div>'+
+    '</li>';
+  }
+  function renderLists(){
+    ["req","doc"].forEach(function(t){
+      $("list-"+t).innerHTML = ITEMS.filter(function(i){return i.tab===t;}).map(rowHtml).join("");
+    });
+  }
+
+  function renderPlan(){
+    $("tl-plan").innerHTML = PLAN.map(function(p){
+      if(p.today) return '<li class="today"><span class="mark">いまここ（デモの例：11/10）</span></li>';
+      return '<li><span class="when">'+esc(p.when)+'</span><span class="who">'+esc(p.who)+'</span><span class="card"><span class="what">'+esc(p.what)+'</span></span></li>';
+    }).join("");
+  }
+  function renderAfter(){
+    $("tl-after").innerHTML = AFTER.map(function(a){
+      return '<li><span class="when">'+esc(a.when)+'</span><span class="card"><span class="what">'+esc(a.what)+'</span><span class="src" style="display:block;margin-top:4px">'+srcLinks(a.src)+'</span></span></li>';
+    }).join("");
+  }
+  function renderAI(){
+    $("recBody").innerHTML = RECORDS.map(function(r){
+      return '<tr><td class="num" style="white-space:nowrap">'+esc(r.date.slice(5).replace('-','/'))+'</td><td>'+esc(r.site)+'</td><td>'+esc(r.unit)+'</td><td class="num">'+esc(r.refrigerant)+'</td><td class="kg num">'+r.kg.toFixed(1)+'</td></tr>';
+    }).join("");
+    var by={}, order=[];
+    RECORDS.forEach(function(r){ if(!(r.refrigerant in by)){by[r.refrigerant]=0;order.push(r.refrigerant);} by[r.refrigerant]+=r.kg; });
+    var rows='<tr><th scope="row">回収した台数</th><td>'+RECORDS.length+' 台</td></tr>';
+    order.forEach(function(k){ rows+='<tr><th scope="row">'+esc(k)+'</th><td>'+by[k].toFixed(1)+' kg</td></tr>'; });
+    $("sum").innerHTML = '<tbody>'+rows+'</tbody>';
+    var last = RECORDS[RECORDS.length-1];
+    $("cert").innerHTML =
+      '<dt>回収した日</dt><dd class="num">'+esc(last.date)+'</dd>'+
+      '<dt>現場</dt><dd>'+esc(last.site)+'</dd>'+
+      '<dt>機器</dt><dd>'+esc(last.unit)+'</dd>'+
+      '<dt>冷媒の種類</dt><dd class="num">'+esc(last.refrigerant)+'</dd>'+
+      '<dt>回収した量</dt><dd class="num">'+last.kg.toFixed(1)+' kg</dd>'+
+      '<dt>回収した業者</dt><dd>（架空）東和設備工業株式会社</dd>';
+  }
+
+  function render(){ renderCounts(); renderLists(); }
+
+  /* 状態の切り替え・説明の開閉（行の中の操作はまとめて受ける） */
+  function onListClick(e){
+    var btn = e.target.closest("button[data-act]");
+    if(!btn) return;
+    var li = btn.closest(".item"); if(!li) return;
+    var id = li.getAttribute("data-id");
+    if(btn.getAttribute("data-act")==="status"){
+      state[id] = NEXT[state[id]];
+      save();
+      renderCounts();
+      /* 説明の開閉と他の行を動かさないよう、この行だけ描き直す */
+      var it = ITEMS.filter(function(i){return i.id===id;})[0];
+      var tmp = document.createElement("ul"); tmp.innerHTML = rowHtml(it);
+      var fresh = tmp.firstChild; li.parentNode.replaceChild(fresh, li);
+      var nb = fresh.querySelector('button[data-act="status"]'); if(nb) nb.focus();
+    }else{
+      openIds[id] = !openIds[id];
+      var open = !!openIds[id];
+      btn.setAttribute("aria-expanded", String(open));
+      btn.textContent = open ? "説明を閉じる" : "説明を開く";
+      var ex = li.querySelector(".explain"); if(open) ex.removeAttribute("hidden"); else ex.setAttribute("hidden","");
+    }
+  }
+  $("list-req").addEventListener("click", onListClick);
+  $("list-doc").addEventListener("click", onListClick);
+
+  /* タブ */
+  var TABS = ["req","doc","plan","after"];
+  function selectTab(name, focus){
+    TABS.forEach(function(t){
+      var b=$("tab-"+t), on=(t===name);
+      b.setAttribute("aria-selected", String(on));
+      b.tabIndex = on?0:-1;
+      var p=$("p-"+t); if(on) p.removeAttribute("hidden"); else p.setAttribute("hidden","");
+      if(on && focus) b.focus();
+    });
+  }
+  TABS.forEach(function(t,idx){
+    var b=$("tab-"+t);
+    b.addEventListener("click", function(){ selectTab(t,false); });
+    b.addEventListener("keydown", function(e){
+      var n=null;
+      if(e.key==="ArrowRight") n=(idx+1)%TABS.length;
+      else if(e.key==="ArrowLeft") n=(idx+TABS.length-1)%TABS.length;
+      else if(e.key==="Home") n=0;
+      else if(e.key==="End") n=TABS.length-1;
+      if(n!==null){ e.preventDefault(); selectTab(TABS[n], true); }
+    });
+  });
+
+  /* 確認の画面・下書きの画面（自前。confirm()/alert() は使わない） */
+  var lastFocus=null;
+  function openDlg(d, from){
+    lastFocus = from || document.activeElement;
+    if(typeof d.showModal==="function") d.showModal(); else d.setAttribute("open","");
+    var f = d.querySelector("button"); if(f) f.focus();
+  }
+  function closeDlg(d){
+    if(typeof d.close==="function") d.close(); else d.removeAttribute("open");
+    if(lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  ["dlgReset","dlgDraft"].forEach(function(id){
+    var d=$(id);
+    d.addEventListener("click", function(e){
+      if(e.target===d) closeDlg(d);
+      if(e.target.closest && e.target.closest("[data-close]")) closeDlg(d);
+    });
+    d.addEventListener("cancel", function(e){ e.preventDefault(); closeDlg(d); });
+  });
+  $("resetBtn").addEventListener("click", function(e){ openDlg($("dlgReset"), e.currentTarget); });
+  $("doReset").addEventListener("click", function(){
+    state = initialState(); openIds = {};
+    try{ window.localStorage.removeItem(KEY); }catch(e){}
+    render(); closeDlg($("dlgReset"));
+  });
+  $("draftBtn").addEventListener("click", function(e){ openDlg($("dlgDraft"), e.currentTarget); });
+
+  load(); render(); renderPlan(); renderAfter(); renderAI();
+})();
+</script>
+</body>
+</html>
